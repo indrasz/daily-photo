@@ -1,6 +1,6 @@
 # Daily Photo — Static Posturografi (Next.js)
 
-Sistem pemeriksaan keseimbangan tubuh berbasis sensor load cell, di-generate dari design Figma ke **Next.js 16 (App Router) + TypeScript + Tailwind CSS**.
+Sistem pemeriksaan keseimbangan tubuh berbasis sensor load cell
 
 ## Stack
 
@@ -9,7 +9,7 @@ Sistem pemeriksaan keseimbangan tubuh berbasis sensor load cell, di-generate dar
 - **Tailwind CSS 3.4**
 - **Recharts 3** — LineChart & ScatterChart
 - **Inter** font via `next/font/google`
-- Inline SVG icons (no icon library)
+- Inline SVG icons
 
 ## Struktur
 
@@ -51,25 +51,3 @@ Buka `http://localhost:3000`.
 | `/form`        | Form identitas pasien dengan validasi inline               |
 | `/analytic`    | Hasil 2 tahap + kesimpulan postur                          |
 
-Form mem-persist data ke `sessionStorage` agar nama pasien muncul di header pemeriksaan.
-
-## Design tokens
-
-Tailwind `theme.extend` di `tailwind.config.ts` memetakan palette Figma:
-
-- `brand.600` `#155DFC` — primary
-- `brand.900` `#1C398E` — heading deep blue
-- `accent.500` `#9333EA` — stabilogram / Center of Pressure
-- `success.600` `#16A34A` — stage selesai
-- `warning.600` `#F54900` — timer tahap aktif
-- `danger` `#FB2C36` — error & status perlu perhatian
-- `ink` / `ink.muted` / `ink.subtle` — skala warna teks
-- `surface` / `surface.muted` / `surface.line` — warna permukaan & border
-- `bg-page` — gradient halaman (`#EFF6FF → #FFFFFF → #EFF6FF`)
-- `shadow.card` / `shadow.soft` / `shadow.btn` — custom box-shadow
-
-## Catatan
-
-- Layout responsive: grid kolom otomatis menurunkan jadi single column di breakpoint kecil.
-- Chart menggunakan **Recharts** (`LineChart`, `ScatterChart`) dengan wrapper `ResponsiveContainer`.
-- Data grafik bersumber dari `lib/mock-signals.ts`; ganti dengan stream sensor asli sesuai kebutuhan.

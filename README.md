@@ -1,12 +1,13 @@
 # Daily Photo — Static Posturografi (Next.js)
 
-Sistem pemeriksaan keseimbangan tubuh berbasis sensor load cell, di-generate dari design Figma ke **Next.js 14 (App Router) + TypeScript + Tailwind CSS**.
+Sistem pemeriksaan keseimbangan tubuh berbasis sensor load cell, di-generate dari design Figma ke **Next.js 16 (App Router) + TypeScript + Tailwind CSS**.
 
 ## Stack
 
-- **Next.js 14** (App Router)
+- **Next.js 16** (App Router)
 - **React 18** + **TypeScript**
 - **Tailwind CSS 3.4**
+- **Recharts 3** — LineChart & ScatterChart
 - **Inter** font via `next/font/google`
 - Inline SVG icons (no icon library)
 
@@ -19,14 +20,13 @@ app/
 ├── page.tsx                ← Home / dashboard
 ├── instruction/page.tsx    ← Modal petunjuk penggunaan
 ├── form/page.tsx           ← Form data identitas (state + validasi lokal)
-├── processing/page.tsx     ← Pemeriksaan berlangsung (timer + chart live)
 └── analytic/page.tsx       ← Hasil & kesimpulan
 
 components/
 ├── Header.tsx              ← Brand header + slot kanan
 ├── FeatureCard.tsx
 ├── icons.tsx               ← Semua SVG icon (Activity, Play, Book, dll)
-└── charts.tsx              ← LineChart + ScatterChart (SVG, no deps)
+└── charts.tsx              ← LineChart + ScatterChart (via Recharts)
 
 lib/
 ├── utils.ts                ← cn(), fmtTime()
@@ -49,7 +49,6 @@ Buka `http://localhost:3000`.
 | `/`            | Home — CTA Mulai Pemeriksaan & Petunjuk Penggunaan         |
 | `/instruction` | Modal petunjuk 4 langkah + catatan penting                 |
 | `/form`        | Form identitas pasien dengan validasi inline               |
-| `/processing`  | Timer berjalan + 3 grafik (SPL, Stabilogram, CoP Velocity) |
 | `/analytic`    | Hasil 2 tahap + kesimpulan postur                          |
 
 Form mem-persist data ke `sessionStorage` agar nama pasien muncul di header pemeriksaan.
@@ -64,10 +63,13 @@ Tailwind `theme.extend` di `tailwind.config.ts` memetakan palette Figma:
 - `success.600` `#16A34A` — stage selesai
 - `warning.600` `#F54900` — timer tahap aktif
 - `danger` `#FB2C36` — error & status perlu perhatian
-- `bg-page` — gradient halaman (#EFF6FF → #FFFFFF → #EFF6FF)
+- `ink` / `ink.muted` / `ink.subtle` — skala warna teks
+- `surface` / `surface.muted` / `surface.line` — warna permukaan & border
+- `bg-page` — gradient halaman (`#EFF6FF → #FFFFFF → #EFF6FF`)
+- `shadow.card` / `shadow.soft` / `shadow.btn` — custom box-shadow
 
 ## Catatan
 
 - Layout responsive: grid kolom otomatis menurunkan jadi single column di breakpoint kecil.
-- Chart SVG murni — tidak butuh `recharts` / `chart.js`. Bisa diganti library kalau perlu fitur lebih kaya.
-- Timer di `/processing` dummy (increment per detik); ganti dengan stream sensor asli sesuai kebutuhan.
+- Chart menggunakan **Recharts** (`LineChart`, `ScatterChart`) dengan wrapper `ResponsiveContainer`.
+- Data grafik bersumber dari `lib/mock-signals.ts`; ganti dengan stream sensor asli sesuai kebutuhan.

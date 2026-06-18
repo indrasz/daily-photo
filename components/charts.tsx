@@ -136,8 +136,8 @@ export function ScatterChart({
   yLabel,
   xDomain = [-1, 1],
   yDomain = [-1, 1],
-  xTicks = [-1, -0.5, 0, 0.5, 1],
-  yTicks = [-1, -0.5, 0, 0.5, 1],
+  xTicks,
+  yTicks,
   height = 300,
   legend,
 }: {

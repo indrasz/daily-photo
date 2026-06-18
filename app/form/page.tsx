@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/Header";
 import { ArrowLeftIcon, UserCheckIcon } from "@/components/icons";
+import { useExamStore } from "@/lib/store";
 
 type Gender = "L" | "P" | "";
 type Disorder = "Y" | "N" | "";
@@ -31,9 +32,12 @@ const initial: FormState = {
 
 export default function FormPage() {
   const router = useRouter();
+  const setPatient = useExamStore((s) => s.setPatient);
   const [data, setData] = useState<FormState>(initial);
   const [errors, setErrors] = useState<Errors>({});
   const [touched, setTouched] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setData((d) => ({ ...d, [key]: value }));
@@ -51,16 +55,46 @@ export default function FormPage() {
     return e;
   }
 
-  function onSubmit(ev: FormEvent) {
+  async function onSubmit(ev: FormEvent) {
     ev.preventDefault();
     setTouched(true);
     const e = validate(data);
     setErrors(e);
-    if (Object.keys(e).length === 0) {
-      try {
-        sessionStorage.setItem("posturografi.patient", JSON.stringify(data));
-      } catch {}
+    if (Object.keys(e).length > 0) return;
+
+    setSubmitting(true);
+    setApiError("");
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: data.nama,
+            age: parseInt(data.usia, 10),
+            gender: data.gender === "L" ? "male" : "female",
+            height: parseFloat(data.tinggi),
+            weight: parseFloat(data.berat),
+            notes:
+              data.disorder === "Y"
+                ? "Memiliki kelainan keseimbangan"
+                : "Tidak ada kelainan keseimbangan",
+          }),
+        }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        setApiError(err.message ?? "Gagal menyimpan data pasien");
+        return;
+      }
+      const patient = await res.json();
+      setPatient(patient);
       router.push("/analytic");
+    } catch {
+      setApiError("Gagal terhubung ke server. Pastikan backend berjalan.");
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -196,11 +230,15 @@ export default function FormPage() {
                 />
               </Fieldset>
 
+              {apiError && (
+                <p className="text-sm text-danger text-center">{apiError}</p>
+              )}
               <button
                 type="submit"
-                className="rounded-lg bg-brand-600 hover:bg-brand-700 transition-colors text-white text-sm font-medium py-2.5"
+                disabled={submitting}
+                className="rounded-lg bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-white text-sm font-medium py-2.5"
               >
-                Mulai Pemeriksaan
+                {submitting ? "Menyimpan..." : "Mulai Pemeriksaan"}
               </button>
             </div>
           </form>

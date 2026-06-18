@@ -66,7 +66,7 @@ export default function FormPage() {
     setApiError("");
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3000"}/patients`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL ?? "https://daily-photo-backend.vercel.app"}/patients`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

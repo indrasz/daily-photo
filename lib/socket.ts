@@ -6,7 +6,7 @@ let _socket: Socket | null = null;
 export function getSocket(): Socket {
   if (!_socket) {
     _socket = io(
-      process.env.NEXT_PUBLIC_BACKEND_URL!,
+      process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3000',
       { autoConnect: false }
     );
   }
